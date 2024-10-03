@@ -8,11 +8,21 @@ const Login = () => {
     const formRef = useRef()
     const navigate = useNavigate()
 
+    function validate() {
+        if (usernameRef.current.value.length < 3) {
+            alert('Username is not valid');
+            usernameRef.current.focus();
+            usernameRef.current.style.outlineColor = 'black';
+            return false;
+        }
+        return true;
+    }
+
     function hendelSubmit(e) {
         e.preventDefault()
+        let isValid = validate();
         const userForm = {
             'username': usernameRef.current.value,
-            'email': emailRef.current.value,
             'password': passwordRef.current.value
         }
         setLoading(true)
@@ -25,14 +35,14 @@ const Login = () => {
         })
             .then((res) => res.json())
             .then((data) => {
-                if (data.message == 'User Not found' || data.message == 'Invalid Password') {
+                if (data.message == 'User Not found') {
                     alert("Username yoki parol noto'g'ri");
                 }
 
                 if (data.id) {
                     localStorage.setItem('token', data.accessToken)
                     localStorage.setItem('user', JSON.stringify(data))
-                    navigate('/home')
+                    navigate('/')
                 }
             })
             .catch((err) => console.log(err))

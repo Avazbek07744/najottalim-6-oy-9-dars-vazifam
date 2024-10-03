@@ -9,15 +9,43 @@ const Register = () => {
     const formRef = useRef()
     const navigate = useNavigate()
 
+    const validateEmail = (email) => {
+        return String(email)
+            .toLowerCase()
+            .match(
+                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            );
+    };
+
+    function validate() {
+        if (usernameRef.current.value.length < 3) {
+            alert('Username is not valid');
+            usernameRef.current.focus();
+            usernameRef.current.style.outlineColor = 'black';
+            return false;
+        }
+
+        if (!validateEmail(emailRef.current.value)) {
+            alert('Email is not valid');
+            emailRef.current.focus();
+            emailRef.current.style.outlineColor = 'black';
+            clearForm();
+            return false;
+        }
+
+        return true;
+    }
+
     function hendelSubmit(e) {
         e.preventDefault()
+        let isValid = validate();
         const userForm = {
             'username': usernameRef.current.value,
             'email': emailRef.current.value,
             'password': passwordRef.current.value
         }
         setLoading(true)
-        fetch(`${import.meta.env.VITE_API}/api/auth/signup`, { // <-- fixed here
+        fetch(`${import.meta.env.VITE_API}/api/auth/signup`, { 
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
